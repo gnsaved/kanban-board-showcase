@@ -1,0 +1,178 @@
+:root {
+  /* Apple-esque Dark Mode Palette */
+  --bg-body: #000000;
+  --bg-card: #1c1c1e;
+  --bg-card-hover: #2c2c2e;
+  --text-primary: #f5f5f7;
+  --text-secondary: #86868b;
+  --accent-blue: #0A84FF;
+  --accent-glass: rgba(255, 255, 255, 0.1);
+  --border-glass: rgba(255, 255, 255, 0.1);
+  --shadow-subtle: 0 10px 40px rgba(0,0,0,0.5);
+  --radius-xl: 28px;
+  --radius-md: 18px;
+  --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI",
+                Roboto, Helvetica, Arial, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  font-family: var(--font-stack);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  /* Subtle background */
+  background: radial-gradient(circle at top left, #1a1a1a, #000000);
+}
+
+.container {
+  width: 100%;
+  max-width: 1000px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+header {
+  text-align: left;
+  padding-left: 10px;
+  animation: fadeIn 0.8s ease-out;
+}
+
+h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  background: linear-gradient(90deg, #fff, #86868b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+
+p.subtitle {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+/* Bento Grid */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  perspective: 1000px;
+}
+
+.card {
+  display: block;
+  text-decoration: none;
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: 30px;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 1px solid var(--border-glass);
+  overflow: hidden;
+  height: 280px;
+  cursor: pointer;
+  box-shadow: var(--shadow-subtle);
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  background: var(--bg-card-hover);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+  z-index: 2;
+  position: relative;
+}
+
+.tag {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.card-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: 5px;
+}
+
+.card-desc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.arrow-icon {
+  width: 32px;
+  height: 32px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.card:hover .arrow-icon {
+  background: var(--text-primary);
+  transform: rotate(45deg);
+}
+
+.card:hover .arrow-icon svg path {
+  stroke: #000;
+}
+
+/* Blobs */
+.blob {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.4;
+  z-index: 0;
+  transition: opacity 0.5s ease;
+}
+
+.card:hover .blob { opacity: 0.6; }
+
+/* Per-card blob color */
+.card-1 .blob { background: #0052CC; top: -50px; right: -50px; } /* Jira Blue */
+.card-2 .blob { background: #FF5630; bottom: -50px; left: -50px; } /* Atlassian Red/Orange */
+.card-3 .blob { background: #34C759; top: 40%; left: 40%; width: 200px; } /* iOS Glass Green */
+.card-4 .blob { background: #AF52DE; top: -60px; left: -20px; } /* Pro Purple */
+
+/* Responsive */
+@media (max-width: 768px) {
+  h1 { font-size: 2.2rem; }
+  .bento-grid { grid-template-columns: 1fr; }
+  .card { height: 220px; }
+  body { height: auto; padding: 40px 0; overflow-y: auto; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Personal Task Board — Kanban</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">KB</div>
+      <div>
+        <h1>Personal Task Board</h1>
+        <p class="muted">Drag tasks between columns. Everything saves automatically.</p>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <button class="btn" id="addTaskBtn">+ Add task</button>
+      <button class="btn btn-ghost" id="resetBtn" title="Clear all tasks">Reset</button>
+    </div>
+  </header>
+
+  <main class="board" id="board">
+    <!-- Column: To Do -->
+    <section class="column" aria-label="To Do column">
+      <div class="column-head">
+        <div>
+          <h2>To Do</h2>
+          <p class="muted small">Planned tasks</p>
+        </div>
+        <span class="count" id="count-todo">0</span>
+      </div>
+
+      <ol class="list" id="list-todo" data-column="todo" aria-label="To Do list"></ol>
+    </section>
+
+    <!-- Column: Doing -->
+    <section class="column" aria-label="Doing column">
+      <div class="column-head">
+        <div>
+          <h2>Doing</h2>
+          <p class="muted small">In progress</p>
+        </div>
+        <span class="count" id="count-doing">0</span>
+      </div>
+
+      <ol class="list" id="list-doing" data-column="doing" aria-label="Doing list"></ol>
+    </section>
+
+    <!-- Column: Done -->
+    <section class="column" aria-label="Done column">
+      <div class="column-head">
+        <div>
+          <h2>Done</h2>
+          <p class="muted small">Completed</p>
+        </div>
+        <span class="count" id="count-done">0</span>
+      </div>
+
+      <ol class="list" id="list-done" data-column="done" aria-label="Done list"></ol>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" id="modalBackdrop" hidden></div>
+
+  <dialog class="modal" id="taskModal" aria-label="Task editor">
+    <form method="dialog" class="modal-card" id="taskForm">
+      <div class="modal-head">
+        <h3 id="modalTitle">Add task</h3>
+        <button type="button" class="icon-btn" id="closeModalBtn" aria-label="Close">✕</button>
+      </div>
+
+      <input type="hidden" id="taskId" />
+
+      <label class="field">
+        <span>Title</span>
+        <input id="titleInput" type="text" maxlength="120" placeholder="e.g., Update GitHub README" required />
+      </label>
+
+      <label class="field">
+        <span>Description (optional)</span>
+        <textarea id="descInput" rows="3" maxlength="500" placeholder="Add a short note…"></textarea>
+      </label>
+
+      <label class="field">
+        <span>Priority</span>
+        <select id="priorityInput" required>
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+      </label>
+
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" id="cancelBtn">Cancel</button>
+        <button class="btn" id="saveBtn" type="submit">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

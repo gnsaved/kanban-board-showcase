@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kanban Task Boards — UI/UX Suite</title>
+
+  <meta name="description" content="A suite of 4 Kanban board UI designs built with Vanilla JS. Drag & drop, priority tags, local storage, and clean UX." />
+  <meta name="theme-color" content="#0B1220" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="landing.css" />
+</head>
+<body>
+
+  <!-- Ambient background -->
+  <div class="bg">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="grid"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="badge">KB</div>
+      <div class="brand-text">
+        <div class="brand-title">Kanban Task Boards</div>
+        <div class="brand-sub">4 UI designs • Drag & drop • Local storage</div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <a class="btn ghost" href="README.md" aria-label="Open project README">Docs</a>
+      <button class="btn primary" id="openAllBtn" type="button">Open all demos</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-left">
+        <div class="pill">
+          <span class="dot"></span>
+          UI/UX portfolio suite
+        </div>
+
+        <h1>
+          A clean Kanban suite with
+          <span class="shine">multiple design systems</span>.
+        </h1>
+
+        <p class="lead">
+          Four different board interfaces built with the same core logic:
+          task creation, drag-and-drop, priority tags, and persistence.
+          Designed to show layout skills, micro-interactions, and product thinking.
+        </p>
+
+        <div class="cta">
+          <a class="btn primary" href="design-1-jira-style/index.html">Start with Design 1</a>
+          <a class="btn ghost" href="#boards">Explore designs</a>
+        </div>
+
+        <div class="meta">
+          <div class="chip">Vanilla JS</div>
+          <div class="chip">SortableJS</div>
+          <div class="chip">Mobile-first</div>
+          <div class="chip">LocalStorage</div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="preview-card">
+          <div class="preview-top">
+            <div class="window-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="preview-title">Suite Preview</div>
+            <div class="preview-actions">
+              <span class="mini"></span><span class="mini"></span><span class="mini"></span>
+            </div>
+          </div>
+
+          <div class="preview-body">
+            <div class="mini-cols">
+              <div class="mini-col">
+                <div class="mini-col-head"><span class="k"></span>To Do</div>
+                <div class="mini-task hi"></div>
+                <div class="mini-task md"></div>
+              </div>
+              <div class="mini-col">
+                <div class="mini-col-head"><span class="k blue"></span>Doing</div>
+                <div class="mini-task md"></div>
+              </div>
+              <div class="mini-col">
+                <div class="mini-col-head"><span class="k green"></span>Done</div>
+                <div class="mini-task lo"></div>
+              </div>
+            </div>
+
+            <div class="preview-foot">
+              <div class="signal">
+                <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+              </div>
+              <div class="muted">Drag • Drop • Persist</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="note">
+          <div class="note-ic">✦</div>
+          <div>
+            <div class="note-title">UI variety matters</div>
+            <div class="note-sub">Each design showcases different layout patterns and interaction choices.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="boards" id="boards">
+      <div class="section-head">
+        <h2>Pick a board design</h2>
+        <p class="muted">
+          Same concept, different product feel. Open any design to see it live.
+        </p>
+      </div>
+
+      <div class="cards">
+
+        <!-- Design 1 -->
+        <article class="card">
+          <div class="card-head">
+            <div class="tag">Design 1</div>
+            <div class="icons">
+              <span class="ic"></span><span class="ic"></span><span class="ic"></span>
+            </div>
+          </div>
+          <h3>Jira-Style Board</h3>
+          <p>Sidebar + top controls, structured layout. Feels like a real product dashboard.</p>
+          <div class="card-meta">
+            <span class="pill-mini">Structured UI</span>
+            <span class="pill-mini">Filters</span>
+            <span class="pill-mini">WIP badge</span>
+          </div>
+          <div class="card-actions">
+            <a class="btn primary" href="design-1-jira-style/index.html">Open</a>
+            <a class="btn ghost" href="design-1-jira-style/README.md">Readme</a>
+          </div>
+        </article>
+
+        <!-- Design 2 -->
+        <article class="card">
+          <div class="card-head">
+            <div class="tag">Design 2</div>
+            <div class="icons">
+              <span class="ic"></span><span class="ic"></span><span class="ic"></span>
+            </div>
+          </div>
+          <h3>Alass Dark Glass</h3>
+          <p>Dark gradient + soft glass surfaces. High contrast, modern, and premium.</p>
+          <div class="card-meta">
+            <span class="pill-mini">Dark UI</span>
+            <span class="pill-mini">Glass</span>
+            <span class="pill-mini">Soft depth</span>
+          </div>
+          <div class="card-actions">
+            <a class="btn primary" href="design-2-alass/index.html">Open</a>
+            <a class="btn ghost" href="design-2-alass/README.md">Readme</a>
+          </div>
+        </article>
+
+        <!-- Design 3 -->
+        <article class="card">
+          <div class="card-head">
+            <div class="tag">Design 3</div>
+            <div class="icons">
+              <span class="ic"></span><span class="ic"></span><span class="ic"></span>
+            </div>
+          </div>
+          <h3>iTask Glass Mesh</h3>
+          <p>Mesh gradient background with glass panels. Lightweight, iOS-inspired feel.</p>
+          <div class="card-meta">
+            <span class="pill-mini">Mesh</span>
+            <span class="pill-mini">Inter</span>
+            <span class="pill-mini">Touch-friendly</span>
+          </div>
+          <div class="card-actions">
+            <a class="btn primary" href="design-3-itask-glass/index.html">Open</a>
+            <a class="btn ghost" href="design-3-itask-glass/README.md">Readme</a>
+          </div>
+        </article>
+
+        <!-- Design 4 -->
+        <article class="card">
+          <div class="card-head">
+            <div class="tag">Design 4</div>
+            <div class="icons">
+              <span class="ic"></span><span class="ic"></span><span class="ic"></span>
+            </div>
+          </div>
+          <h3>Pro Clean Board</h3>
+          <p>Clean, minimal, corporate-ready. Simple modal, strong readability, fast UX.</p>
+          <div class="card-meta">
+            <span class="pill-mini">Minimal</span>
+            <span class="pill-mini">Fast</span>
+            <span class="pill-mini">Readable</span>
+          </div>
+          <div class="card-actions">
+            <a class="btn primary" href="design-4-pro-kanban/index.html">Open</a>
+            <a class="btn ghost" href="design-4-pro-kanban/README.md">Readme</a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-left">
+        <div class="foot-badge">KB</div>
+        <div>
+          <div class="foot-title">Kanban Task Boards</div>
+          <div class="muted small">A focused UI/UX suite for drag-and-drop task management.</div>
+        </div>
+      </div>
+
+      <div class="footer-right">
+        <a class="link" href="#boards">Designs</a>
+        <a class="link" href="README.md">Docs</a>
+      </div>
+    </footer>
+  </main>
+
+  <script src="landing.js"></script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iTask Kanban Board</title>
+
+  <!-- Tailwind + Sortable -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Local CSS -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body class="p-4 md:p-8 selection:bg-indigo-100 selection:text-indigo-700">
+  <div class="max-w-7xl mx-auto h-full flex flex-col">
+    <header class="flex justify-between items-end mb-8 px-2">
+      <div>
+        <p class="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-1">Project Tracker</p>
+        <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">Board</h1>
+      </div>
+
+      <button id="openModalBtn"
+        class="group w-12 h-12 glass shadow-lg rounded-full flex items-center justify-center text-indigo-600 text-2xl hover:bg-white hover:scale-110 transition-all duration-300"
+        aria-label="Add task">
+        <span class="group-hover:rotate-90 transition-transform duration-300">+</span>
+      </button>
+    </header>
+
+    <div class="flex flex-col md:flex-row gap-6 overflow-x-auto pb-8 no-scrollbar h-full">
+
+      <!-- TO DO -->
+      <div class="flex-1 min-w-[300px]">
+        <div class="glass rounded-[2rem] p-5 shadow-xl shadow-indigo-100/50 h-full flex flex-col">
+          <h2 class="text-lg font-bold text-slate-800 px-2 mb-4 flex justify-between items-center">
+            To Do
+            <span class="text-xs bg-white border border-slate-100 px-2.5 py-1 rounded-full text-slate-500 font-bold shadow-sm"
+              id="todo-count">0</span>
+          </h2>
+          <div id="todo" data-status="todo" class="kanban-col space-y-3 min-h-[150px] flex-1"></div>
+        </div>
+      </div>
+
+      <!-- IN PROGRESS -->
+      <div class="flex-1 min-w-[300px]">
+        <div class="glass rounded-[2rem] p-5 shadow-xl shadow-indigo-100/50 h-full flex flex-col">
+          <h2 class="text-lg font-bold text-slate-800 px-2 mb-4 flex justify-between items-center">
+            In Progress
+            <span class="text-xs bg-white border border-slate-100 px-2.5 py-1 rounded-full text-slate-500 font-bold shadow-sm"
+              id="doing-count">0</span>
+          </h2>
+          <div id="doing" data-status="doing" class="kanban-col space-y-3 min-h-[150px] flex-1"></div>
+        </div>
+      </div>
+
+      <!-- DONE -->
+      <div class="flex-1 min-w-[300px]">
+        <div class="glass rounded-[2rem] p-5 shadow-xl shadow-indigo-100/50 h-full flex flex-col">
+          <h2 class="text-lg font-bold text-slate-800 px-2 mb-4 flex justify-between items-center">
+            Done
+            <span class="text-xs bg-white border border-slate-100 px-2.5 py-1 rounded-full text-slate-500 font-bold shadow-sm"
+              id="done-count">0</span>
+          </h2>
+          <div id="done" data-status="done" class="kanban-col space-y-3 min-h-[150px] flex-1"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div id="modal" class="hidden fixed inset-0 z-50 flex items-end md:items-center justify-center" role="dialog" aria-modal="true">
+    <div id="modalBackdrop" class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity"></div>
+
+    <div class="bg-white w-full max-w-lg rounded-t-[2.5rem] md:rounded-[2.5rem] p-8 shadow-2xl transform transition-all z-10 relative">
+      <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8 md:hidden"></div>
+
+      <h3 class="text-2xl font-bold mb-6 text-slate-800">New Task</h3>
+
+      <label class="sr-only" for="taskInput">Task title</label>
+      <input type="text" id="taskInput" placeholder="What needs to be done?"
+        class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl mb-4 text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all" />
+
+      <div class="flex gap-3 mb-8">
+        <label class="sr-only" for="priorityInput">Priority</label>
+        <select id="priorityInput"
+          class="flex-1 bg-slate-50 border border-slate-200 p-4 rounded-2xl outline-none text-slate-600 focus:ring-2 focus:ring-indigo-500">
+          <option value="Low">Low Priority</option>
+          <option value="Medium" selected>Medium Priority</option>
+          <option value="High">High Priority</option>
+        </select>
+      </div>
+
+      <div class="flex gap-4">
+        <button id="cancelBtn" type="button" class="flex-1 py-4 font-semibold text-slate-500 hover:text-slate-700 transition-colors">
+          Cancel
+        </button>
+        <button id="addTaskBtn" type="button"
+          class="flex-1 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold shadow-lg shadow-indigo-200 transition-all active:scale-95">
+          Add Task
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Local JS -->
+  <script src="app.js"></script>
+</body>
+</html>

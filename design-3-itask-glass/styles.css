@@ -1,0 +1,49 @@
+body {
+  font-family: 'Inter', sans-serif;
+
+  /* Modern Mesh Gradient Background */
+  background:
+    radial-gradient(at top left, #e0e7ff, #f5f3ff),
+    radial-gradient(at bottom right, #fdf2f8, #e0f2fe);
+
+  min-height: 100vh;
+  color: #1e293b;
+}
+
+/* Glassmorphism Effect */
+.glass {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Card Interactions */
+.ios-card {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s;
+  touch-action: manipulation; /* Better touch behavior */
+}
+.ios-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+.ios-card:active {
+  transform: scale(0.98);
+}
+
+/* Drag & Drop Visuals */
+.sortable-ghost {
+  opacity: 0.4;
+  background: #f1f5f9;
+  border: 2px dashed #cbd5e1;
+}
+.sortable-drag {
+  cursor: grabbing;
+  opacity: 1;
+  background: white;
+  transform: rotate(2deg);
+}
+
+/* Hide scrollbar but allow scrolling */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kanban Board — Jira Style</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- LEFT BLUE RAIL -->
+    <aside class="rail" aria-label="Primary">
+      <div class="rail-top">
+        <button class="rail-btn" title="Home" aria-label="Home">
+          <span class="rail-ic">⟟</span>
+        </button>
+        <button class="rail-btn" title="Search" aria-label="Search">
+          <span class="rail-ic">⌕</span>
+        </button>
+        <button class="rail-btn" title="Create" aria-label="Create">
+          <span class="rail-ic">＋</span>
+        </button>
+      </div>
+
+      <div class="rail-bottom">
+        <button class="rail-avatar" title="Profile" aria-label="Profile">
+          <span>G</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- SECONDARY SIDEBAR -->
+    <aside class="sidebar" aria-label="Project sidebar">
+      <div class="project">
+        <div class="project-badge" aria-hidden="true">🚀</div>
+        <div class="project-meta">
+          <div class="project-name">Teams in space</div>
+          <div class="project-sub">Software project</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item active" type="button">
+          <span class="nav-ic">▦</span>
+          <span>Board</span>
+        </button>
+        <button class="nav-item" type="button">
+          <span class="nav-ic">⌁</span>
+          <span>Features</span>
+        </button>
+        <button class="nav-item" type="button">
+          <span class="nav-ic">⚙</span>
+          <span>Settings</span>
+        </button>
+
+        <div class="nav-sep"></div>
+
+        <button class="nav-item" type="button">
+          <span class="nav-ic">📣</span>
+          <span>Give feedback</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <header class="main-head">
+        <div class="title-row">
+          <h1>Board</h1>
+
+          <div class="head-actions">
+            <button class="ghost" id="resetBtn" type="button" title="Clear all tasks">Reset</button>
+            <button class="primary" id="addTaskBtn" type="button">+ Create</button>
+          </div>
+        </div>
+
+        <div class="filters-row">
+          <div class="search">
+            <span class="search-ic">⌕</span>
+            <input id="searchInput" type="search" placeholder="Search tasks…" autocomplete="off" />
+          </div>
+
+          <div class="people" aria-label="People">
+            <div class="avatar a1" title="Ada">A</div>
+            <div class="avatar a2" title="Hugo">H</div>
+            <div class="avatar a3" title="Jules">J</div>
+            <div class="avatar a4" title="Mina">M</div>
+            <div class="avatar add" title="Add person">＋</div>
+          </div>
+
+          <label class="label-filter">
+            <span>Label</span>
+            <select id="priorityFilter">
+              <option value="all" selected>All</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="hint" id="filterHint" hidden>
+          Filters are active — clear search/label to drag & reorder.
+        </div>
+      </header>
+
+      <section class="board" aria-label="Kanban board">
+
+        <!-- TO DO -->
+        <div class="col">
+          <div class="col-head">
+            <div class="col-title">
+              <span class="col-name">TO DO</span>
+              <span class="col-count" id="count-todo">0</span>
+            </div>
+          </div>
+
+          <ol class="list" id="list-todo" data-column="todo" aria-label="To do list"></ol>
+
+          <button class="col-add" type="button" data-add-to="todo" aria-label="Add to To Do">＋</button>
+        </div>
+
+        <!-- IN PROGRESS -->
+        <div class="col inprogress">
+          <div class="col-head">
+            <div class="col-title">
+              <span class="col-name">IN PROGRESS</span>
+              <span class="col-count" id="count-doing">0</span>
+            </div>
+            <span class="wip" id="wipBadge">MAX 3</span>
+          </div>
+
+          <ol class="list" id="list-doing" data-column="doing" aria-label="In progress list"></ol>
+
+          <button class="col-add" type="button" data-add-to="doing" aria-label="Add to In Progress">＋</button>
+        </div>
+
+        <!-- DONE -->
+        <div class="col">
+          <div class="col-head">
+            <div class="col-title">
+              <span class="col-name">DONE</span>
+              <span class="col-count" id="count-done">0</span>
+            </div>
+          </div>
+
+          <ol class="list" id="list-done" data-column="done" aria-label="Done list"></ol>
+
+          <button class="col-add" type="button" data-add-to="done" aria-label="Add to Done">＋</button>
+        </div>
+
+        <!-- quick add on right like screenshot -->
+        <button class="floating-plus" id="floatingAdd" type="button" title="Create task" aria-label="Create task">＋</button>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL -->
+  <div class="backdrop" id="backdrop" hidden></div>
+
+  <dialog class="modal" id="taskModal" aria-label="Task editor">
+    <form method="dialog" class="modal-card" id="taskForm">
+      <div class="modal-head">
+        <h2 id="modalTitle">Create task</h2>
+        <button type="button" class="icon" id="closeModalBtn" aria-label="Close">✕</button>
+      </div>
+
+      <input type="hidden" id="taskId" />
+      <input type="hidden" id="taskColumn" />
+
+      <label class="field">
+        <span>Title</span>
+        <input id="titleInput" type="text" maxlength="120" placeholder="e.g., Implement feedback collector" required />
+      </label>
+
+      <label class="field">
+        <span>Description (optional)</span>
+        <textarea id="descInput" rows="3" maxlength="600" placeholder="Short notes…"></textarea>
+      </label>
+
+      <div class="grid2">
+        <label class="field">
+          <span>Priority</span>
+          <select id="priorityInput" required>
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Assignee (optional)</span>
+          <input id="assigneeInput" type="text" maxlength="40" placeholder="e.g., John" />
+        </label>
+      </div>
+
+      <div class="modal-actions">
+        <button class="ghost" type="button" id="cancelBtn">Cancel</button>
+        <button class="primary" id="saveBtn" type="submit">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
