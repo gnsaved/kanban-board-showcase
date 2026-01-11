@@ -1,60 +1,31 @@
 "use strict";
 
 /**
- * Pro Kanban (Design 4)
- * - Tailwind (CDN) + SortableJS
- * - Drag across columns + reorder within column
- * - LocalStorage persistence INCLUDING order + status
- * - No inline onclick; uses event listeners
+ * Pro Kanban (Design 4) - Updated
+ * - Safer DOM bindings (no crashes if IDs missing)
+ * - Better drag sync: DOM controls status+order, tasks keep original fields
+ * - Priority normalization so classes stay correct
+ * - Safer unique IDs (randomUUID fallback)
  */
 
 const STORAGE_KEY = "kanban_design4_data";
-
 const columns = ["todo", "doing", "done"];
 
-const els = {
-  openModalBtn: document.getElementById("openModalBtn"),
-  modal: document.getElementById("modal"),
-  cancelBtn: document.getElementById("cancelBtn"),
-  createBtn: document.getElementById("createBtn"),
-  taskInput: document.getElementById("taskInput"),
-  priorityInput: document.getElementById("priorityInput"),
-  todo: document.getElementById("todo"),
-  doing: document.getElementById("doing"),
-  done: document.getElementById("done"),
-};
-
-let tasks = loadTasks() || [
-  { id: String(Date.now()), content: "Drag me to another column!", priority: "High", status: "todo", order: 0 },
-];
-
-function loadTasks() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
+/* ---------------- Helpers ---------------- */
+function $(id) {
+  return document.getElementById(id);
 }
 
-function saveTasks() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+function makeId() {
+  // collision-safe id generation
+  return (crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`);
 }
 
-function openModal() {
-  els.modal.classList.remove("hidden");
-  els.modal.setAttribute("aria-hidden", "false");
-  setTimeout(() => els.taskInput.focus(), 0);
-}
-
-function closeModal() {
-  els.modal.classList.add("hidden");
-  els.modal.setAttribute("aria-hidden", "true");
-  els.taskInput.value = "";
-  els.priorityInput.value = "Medium";
+function normalizePriority(p) {
+  const x = String(p || "").trim().toLowerCase();
+  if (x === "high") return "High";
+  if (x === "low") return "Low";
+  return "Medium";
 }
 
 function priorityClass(priority) {
@@ -63,7 +34,7 @@ function priorityClass(priority) {
     Medium: "bg-yellow-100 text-yellow-700",
     Low: "bg-green-100 text-green-700",
   };
-  return map[priority] || map.Medium;
+  return map[normalizePriority(priority)] || map.Medium;
 }
 
 function escapeHtml(str) {
@@ -75,8 +46,73 @@ function escapeHtml(str) {
     .replaceAll("'", "&#039;");
 }
 
+/* ---------------- State ---------------- */
+let tasks = loadTasks() || [
+  { id: makeId(), content: "Drag me to another column!", priority: "High", status: "todo", order: 0 },
+];
+
+const els = {
+  openModalBtn: $("openModalBtn"),
+  modal: $("modal"),
+  cancelBtn: $("cancelBtn"),
+  createBtn: $("createBtn"),
+  taskInput: $("taskInput"),
+  priorityInput: $("priorityInput"),
+  todo: $("todo"),
+  doing: $("doing"),
+  done: $("done"),
+};
+
+/* ---------------- Storage ---------------- */
+function loadTasks() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return null;
+
+    // sanitize + normalize
+    return parsed
+      .map((t) => ({
+        id: String(t.id ?? makeId()),
+        content: String(t.content ?? ""),
+        priority: normalizePriority(t.priority),
+        status: columns.includes(t.status) ? t.status : "todo",
+        order: Number.isFinite(t.order) ? t.order : 0,
+      }))
+      .filter((t) => t.content.trim().length > 0);
+  } catch {
+    return null;
+  }
+}
+
+function saveTasks() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+}
+
+/* ---------------- Modal ---------------- */
+function openModal() {
+  if (!els.modal) return;
+  els.modal.classList.remove("hidden");
+  els.modal.setAttribute("aria-hidden", "false");
+  setTimeout(() => els.taskInput?.focus(), 0);
+}
+
+function closeModal() {
+  if (!els.modal) return;
+  els.modal.classList.add("hidden");
+  els.modal.setAttribute("aria-hidden", "true");
+  if (els.taskInput) els.taskInput.value = "";
+  if (els.priorityInput) els.priorityInput.value = "Medium";
+}
+
+/* ---------------- Render ---------------- */
 function renderTasks() {
-  columns.forEach((col) => (document.getElementById(col).innerHTML = ""));
+  // ensure columns exist
+  for (const col of columns) {
+    const el = $(col);
+    if (el) el.innerHTML = "";
+  }
 
   const byStatus = { todo: [], doing: [], done: [] };
   for (const t of tasks) {
@@ -86,6 +122,9 @@ function renderTasks() {
 
   for (const status of columns) {
     byStatus[status].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+    const colEl = $(status);
+    if (!colEl) continue;
 
     for (const task of byStatus[status]) {
       const taskEl = document.createElement("div");
@@ -97,47 +136,52 @@ function renderTasks() {
 
       taskEl.innerHTML = `
         <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded ${pClass}">
-          ${escapeHtml(task.priority)}
+          ${escapeHtml(normalizePriority(task.priority))}
         </span>
 
         <p class="mt-2 text-slate-700 font-medium">${escapeHtml(task.content)}</p>
 
         <div class="flex justify-end mt-2">
-          <button class="text-slate-400 hover:text-red-500 text-xs" type="button" data-action="delete" data-id="${escapeHtml(task.id)}">
+          <button class="text-slate-400 hover:text-red-500 text-xs" type="button"
+                  data-action="delete" data-id="${escapeHtml(task.id)}">
             Delete
           </button>
         </div>
       `;
 
-      document.getElementById(task.status).appendChild(taskEl);
+      colEl.appendChild(taskEl);
     }
   }
 }
 
 /**
- * After drag/drop, DOM order becomes truth:
- * - read each column in order
- * - write back to tasks[] with status + order
+ * After drag/drop, DOM order becomes truth for status+order only.
+ * Keep original content/priority in tasks state.
  */
 function syncFromDOM() {
+  const taskMap = new Map(tasks.map((t) => [t.id, t]));
   const updated = [];
 
   for (const status of columns) {
-    const colEl = document.getElementById(status);
+    const colEl = $(status);
+    if (!colEl) continue;
+
     const cards = [...colEl.querySelectorAll("[data-id]")];
 
     cards.forEach((card, idx) => {
-      const id = card.getAttribute("data-id");
-      const existing = tasks.find((t) => t.id === id);
+      const id = String(card.getAttribute("data-id") || "");
+      const existing = taskMap.get(id);
 
-      // fallback read from DOM (safe if needed)
-      const content = card.querySelector("p")?.innerText ?? existing?.content ?? "";
-      const priority = card.querySelector("span")?.innerText ?? existing?.priority ?? "Medium";
+      // If somehow a card exists with no matching task, rebuild safely from DOM
+      if (!existing) {
+        const content = card.querySelector("p")?.innerText ?? "";
+        const priority = normalizePriority(card.querySelector("span")?.innerText ?? "Medium");
+        updated.push({ id, content, priority, status, order: idx });
+        return;
+      }
 
       updated.push({
-        id: String(id),
-        content: String(content),
-        priority: String(priority),
+        ...existing,
         status,
         order: idx,
       });
@@ -148,9 +192,16 @@ function syncFromDOM() {
   saveTasks();
 }
 
+/* ---------------- Sortable ---------------- */
 function initSortable() {
+  // guard if Sortable missing
+  if (typeof Sortable === "undefined") return;
+
   columns.forEach((id) => {
-    new Sortable(document.getElementById(id), {
+    const el = $(id);
+    if (!el) return;
+
+    new Sortable(el, {
       group: "kanban",
       animation: 150,
       ghostClass: "ghost-card",
@@ -162,17 +213,17 @@ function initSortable() {
   });
 }
 
+/* ---------------- Actions ---------------- */
 function addTask() {
-  const content = (els.taskInput.value || "").trim();
-  const priority = els.priorityInput.value;
-
+  const content = (els.taskInput?.value || "").trim();
+  const priority = normalizePriority(els.priorityInput?.value || "Medium");
   if (!content) return;
 
   const todoOrders = tasks.filter((t) => t.status === "todo").map((t) => t.order ?? 0);
   const nextOrder = todoOrders.length ? Math.max(...todoOrders) + 1 : 0;
 
   tasks.push({
-    id: String(Date.now()),
+    id: makeId(),
     content,
     priority,
     status: "todo",
@@ -189,7 +240,9 @@ function deleteTask(id) {
 
   // re-normalize order inside each column
   const by = { todo: [], doing: [], done: [] };
-  for (const t of tasks) by[t.status].push(t);
+  for (const t of tasks) {
+    if (by[t.status]) by[t.status].push(t);
+  }
 
   for (const status of columns) {
     by[status].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
@@ -207,32 +260,34 @@ document.addEventListener("DOMContentLoaded", () => {
   initSortable();
 });
 
-els.openModalBtn.addEventListener("click", openModal);
-els.cancelBtn.addEventListener("click", closeModal);
-els.createBtn.addEventListener("click", addTask);
+// Bind only if elements exist
+els.openModalBtn?.addEventListener("click", openModal);
+els.cancelBtn?.addEventListener("click", closeModal);
+els.createBtn?.addEventListener("click", addTask);
 
-els.taskInput.addEventListener("keydown", (e) => {
+els.taskInput?.addEventListener("keydown", (e) => {
   if (e.key === "Enter") addTask();
 });
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !els.modal.classList.contains("hidden")) closeModal();
+  if (e.key === "Escape" && els.modal && !els.modal.classList.contains("hidden")) closeModal();
 });
 
 // Click outside modal content closes (only if click is on overlay)
-els.modal.addEventListener("click", (e) => {
+els.modal?.addEventListener("click", (e) => {
   if (e.target === els.modal) closeModal();
 });
 
 // Delete (event delegation)
 document.addEventListener("click", (e) => {
-  const btn = e.target.closest("[data-action='delete']");
+  const btn = e.target.closest?.("[data-action='delete']");
   if (!btn) return;
+
   const id = btn.getAttribute("data-id");
   if (!id) return;
 
   const ok = confirm("Delete this task?");
   if (!ok) return;
 
-  deleteTask(id);
+  deleteTask(String(id));
 });
