@@ -1,5 +1,10 @@
 .ghost-card {
   opacity: 0.4;
-  background-color: #f1f5f9;
-  border: 2px dashed #94a3b8;
+  background-color: #f1f5f9;          /* slate-100 */
+  border: 2px dashed #94a3b8;         /* slate-400 */
+  border-radius: 0.75rem;             /* match rounded-lg */
+}
+
+.ghost-card * {
+  visibility: hidden;                 /* keeps spacing but avoids double text look */
 }
