@@ -1,3 +1,4 @@
+/* Base */
 body {
   font-family: 'Inter', sans-serif;
 
@@ -7,7 +8,7 @@ body {
     radial-gradient(at bottom right, #fdf2f8, #e0f2fe);
 
   min-height: 100vh;
-  color: #1e293b;
+  color: #1e293b; /* slate-800 */
 }
 
 /* Glassmorphism Effect */
@@ -18,32 +19,75 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
-/* Card Interactions */
+/* Column spacing + empty state */
+.kanban-col:empty::before {
+  content: "Drop tasks here";
+  display: block;
+  padding: 12px 14px;
+  margin: 4px 6px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px dashed rgba(148, 163, 184, 0.7); /* slate-400 */
+  color: rgba(100, 116, 139, 0.9);            /* slate-500 */
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Card Interactions (apply this class to task cards if you want the effect) */
 .ios-card {
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s;
   touch-action: manipulation; /* Better touch behavior */
+  user-select: none;
 }
 .ios-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.10);
 }
 .ios-card:active {
   transform: scale(0.98);
 }
 
-/* Drag & Drop Visuals */
+/* Drag & Drop Visuals (Design 4 JS uses ghostClass: "ghost-card") */
+.ghost-card {
+  opacity: 0.45;
+  background: #f1f5f9; /* slate-100 */
+  border: 2px dashed #94a3b8; /* slate-400 */
+  border-radius: 16px;
+}
+
+/* Optional: make ghost look like placeholder (no duplicate text) */
+.ghost-card * {
+  visibility: hidden;
+}
+
+/* SortableJS built-in classes (safe to keep even if you don't explicitly use them) */
 .sortable-ghost {
   opacity: 0.4;
   background: #f1f5f9;
-  border: 2px dashed #cbd5e1;
+  border: 2px dashed #cbd5e1; /* slate-300 */
+  border-radius: 16px;
 }
 .sortable-drag {
   cursor: grabbing;
   opacity: 1;
   background: white;
   transform: rotate(2deg);
+  border-radius: 16px;
+}
+
+/* Better cursor feedback while dragging cards (matches your Tailwind cursor-grab) */
+.kanban-col [data-id] {
+  touch-action: none; /* smoother drag on mobile */
 }
 
 /* Hide scrollbar but allow scrolling */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Modal polish (optional; Tailwind already does most of it) */
+#modal[aria-hidden="true"] {
+  pointer-events: none;
+}
+#modal[aria-hidden="false"] {
+  pointer-events: auto;
+}
